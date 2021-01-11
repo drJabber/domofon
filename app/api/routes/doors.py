@@ -9,8 +9,10 @@ from app.models.schemas.doors  import (DoorIn,
     DoorInCreate
 )
 from app.services.doors import check_door_id_is_taken, check_ext_door_id_is_taken
+from app.services.domofon import Domofon
 
 router = APIRouter()
+domofon = Domofon()
 
 @router.post("/open", response_model=DoorInResponse, name="door:open")
 async def open(
@@ -32,8 +34,14 @@ async def open(
     except EntityDoesNotExist as existence_error:
         raise wrong_door_error
 
-    if not door.open():
+    if not domofon.open(door):
         raise cant_open_error
+    else:
+        doors_repo.update_door(door=Door(door_id=door.door_id), \
+            access_token=door.access_token, \
+            refresh_token=door.refresh_token, \
+            access_token_expires=door.access_token_expires  \
+        )
 
     return DoorInResponse(
         door=Door(door_id=door.door_id)

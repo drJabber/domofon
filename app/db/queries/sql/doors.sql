@@ -4,6 +4,9 @@ SELECT id,
        ext_door_id,
        ext_user,
        ext_password,
+       access_token,
+       refresh_token,
+       acces_token_expires,
        created_at,
        updated_at
 FROM doors
@@ -16,6 +19,9 @@ SELECT id,
        ext_door_id,
        ext_user,
        ext_password,
+       access_token,
+       refresh_token,
+       acces_token_expires,
        created_at,
        updated_at
 FROM doors
@@ -37,6 +43,9 @@ SET door_id        = :new_door_id,
     ext_door_id    = :new_ext_door_id,
     ext_user       = :new_ext_user,
     ext_password   = :new_ext_password,
+    access_token   = :new_access_token,
+    refresh_token  = :new_refresh_token,
+    acces_token_expires = :new_access_token_expires
 WHERE door_id = :door_id
 RETURNING
     updated_at;

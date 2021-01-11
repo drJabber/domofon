@@ -54,4 +54,6 @@ logger.configure(handlers=[{"sink": sys.stderr, "level": LOGGING_LEVEL}])
 #ufanet
 
 UFANET_SERVICE_URL: str = config("UFANET_SERVICE_URL", cast=str, default="https://dom.ufanet.ru")
-UFANET_LOGIN_API: str = config("UFANET_LOGIN_API", cast=str, default="/api/v1/auth_by_contract")
+UFANET_LOGIN_API: str = config("UFANET_LOGIN_API", cast=str, default="/api/v1/auth/auth_by_contract/")
+UFANET_REFRESH_TOKEN_API: str = config("UFANET_REFRESH_TOKEN_API", cast=str, default="/api/v1/auth/refresh/")
+UFANET_OPEN_API: str = config("UFANET_OPEN_API", cast=str, default="/api/v0/open/")

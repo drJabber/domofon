@@ -40,6 +40,12 @@ class Clients(TypedTable):
     id: int
     client_id: str
 
+class Doors(TypedTable):
+    __table__ = "doors"
+
+    id: int
+    door_id: str
+
 
 users = Users()
 clients = Clients()
