@@ -40,11 +40,11 @@ async def open(
         doors_repo.update_door(door=Door(door_id=door.door_id), \
             access_token=door.access_token, \
             refresh_token=door.refresh_token, \
-            access_token_expires=door.access_token_expires  \
+            access_token_expires=door.access_token_expires \
         )
 
     return DoorInResponse(
-        door=Door(door_id=door.door_id)
+        door = Door(door_id=door.door_id)
     )
 
 @router.post("/register", 
