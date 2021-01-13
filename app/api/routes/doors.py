@@ -34,10 +34,11 @@ async def open(
     except EntityDoesNotExist as existence_error:
         raise wrong_door_error
 
-    if not domofon.open(door):
+    if not await domofon.open(door):
         raise cant_open_error
     else:
-        doors_repo.update_door(door=Door(door_id=door.door_id), \
+        await doors_repo.update_door(door=Door(door_id=door.door_id), \
+            ext_door_id=door.ext_door_id, \
             access_token=door.access_token, \
             refresh_token=door.refresh_token, \
             access_token_expires=door.access_token_expires \
@@ -56,12 +57,6 @@ async def register(
     doors_repo: DoorsRepository = Depends(get_repository(DoorsRepository))
 ) -> DoorInResponse:
     if await check_door_id_is_taken(doors_repo, door_create.door_id):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=strings.DOOR_TAKEN,
-        )
-
-    if await check_ext_door_id_is_taken(doors_repo, door_create.ext_door_id):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=strings.DOOR_TAKEN,

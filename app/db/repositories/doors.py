@@ -79,24 +79,24 @@ class DoorsRepository(BaseRepository):
         door_in_db = await self.get_door_by_door_id(door_id=door.door_id)
 
         door_in_db.door_id = door_id or door_in_db.door_id
-        door_in_db.ext_id = ext_door_id or door_in_db.ext_door_id
+        door_in_db.ext_door_id = ext_door_id or door_in_db.ext_door_id
         door_in_db.ext_user = ext_user or door_in_db.ext_user
         door_in_db.ext_password = ext_password or door_in_db.ext_password
-        door_in_db.access_token=access_token or door.access_token,
-        door_in_db.refresh_token=refresh_token or door.refresh_token,
-        door_in_db.access_token_expires=access_token_expires or door.access_token_expires
+        door_in_db.access_token = access_token or door_in_db.access_token
+        door_in_db.refresh_token = refresh_token or door_in_db.refresh_token
+        door_in_db.access_token_expires = access_token_expires or door_in_db.access_token_expires
 
         async with self.connection.transaction():
             door_in_db.updated_at = await queries.update_door_by_door_id(
                 self.connection,
                 door_id=door.door_id,
                 new_door_id=door_in_db.door_id,
-                new_ext_id=door_in_db.ext_door_id,
+                new_ext_door_id=str(door_in_db.ext_door_id),
                 new_ext_user=door_in_db.ext_user,
                 new_ext_password=door_in_db.ext_password,
-                new_access_token=door.access_token,
-                new_refresh_token=door.refresh_token,
-                new_access_token_expires=door.access_token_expires
+                new_access_token=door_in_db.access_token,
+                new_refresh_token=door_in_db.refresh_token,
+                new_access_token_expires=door_in_db.access_token_expires
             )
 
         return door_in_db

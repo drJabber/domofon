@@ -6,7 +6,7 @@ SELECT id,
        ext_password,
        access_token,
        refresh_token,
-       acces_token_expires,
+       access_token_expires,
        created_at,
        updated_at
 FROM doors
@@ -21,7 +21,7 @@ SELECT id,
        ext_password,
        access_token,
        refresh_token,
-       acces_token_expires,
+       access_token_expires,
        created_at,
        updated_at
 FROM doors
@@ -30,8 +30,8 @@ LIMIT 1;
 
 
 -- name: create-new-door<!
-INSERT INTO doors (door_id, ext_door_id, ext_user, ext_password)
-VALUES (:door_id, :ext_door_id, :ext_user, :ext_password)
+INSERT INTO doors (door_id, ext_door_id, ext_user, ext_password, access_token, refresh_token, access_token_expires)
+VALUES (:door_id, :ext_door_id, :ext_user, :ext_password, :access_token, :refresh_token, :access_token_expires)
 RETURNING
     id, created_at, updated_at;
 
@@ -45,7 +45,7 @@ SET door_id        = :new_door_id,
     ext_password   = :new_ext_password,
     access_token   = :new_access_token,
     refresh_token  = :new_refresh_token,
-    acces_token_expires = :new_access_token_expires
+    access_token_expires = :new_access_token_expires
 WHERE door_id = :door_id
 RETURNING
     updated_at;

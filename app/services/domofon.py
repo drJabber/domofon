@@ -1,11 +1,11 @@
 
 import json
+import datetime
 from fastapi import status
 from app.models.schemas.tokens import TokenInResponse
 from app.models.domain.doors import DoorInDB
 from app.core import config
 from aiohttp import TCPConnector, ClientSession
-import jwt
 
 class Utils:
     @staticmethod
@@ -24,38 +24,38 @@ class Domofon:
     """
     login returns auth or none
     """
-    async def login(door: DoorInDB):
+    async def login(self, door: DoorInDB):
         try:
-            session = ClientSession(connector=TCPConnector(ssl=False))
             headers = Utils.get_headers()
             data = {"contract": door.ext_user, "password": door.ext_password}
-            async with session.post(config.UFANET_SERVICE_URL+config.UFANET_LOGIN_API, \
-                            data=json.dumps(data), \
-                            headers=headers) as response:
-                auth = await response.json()
-                door.access_token = auth["access"]
-                door.refresh_token = auth["refresh"]
-                door.access_token_expires = auth["exp"]
-                return auth
+            async with ClientSession(connector=TCPConnector(ssl=False)) as session:
+                async with session.post(config.UFANET_SERVICE_URL+config.UFANET_LOGIN_API, \
+                                data=json.dumps(data), \
+                                headers=headers) as response:
+                    auth = await response.json()
+                    door.access_token = auth["token"]["access"]
+                    door.refresh_token = auth["token"]["refresh"]
+                    door.access_token_expires = datetime.datetime.fromtimestamp(auth["token"]["exp"])
+                    return auth
         except Exception as ex:
             pass
 
     """
     refresh returns auth or none
     """
-    async def refresh(door: DoorInDB):
+    async def refresh(self, door: DoorInDB):
         try:
-            session = ClientSession(connector=TCPConnector(ssl=False))
             headers = Utils.get_headers()
             data = {"refresh": door.refresh_token}
-            async with session.post(config.UFANET_SERVICE_URL+config.UFANET_REFRESH_TOKEN_API, \
-                            data=json.dumps(data), \
-                            headers=headers) as response:
-                auth = await response.json()
-                door.access_token = auth["access"]
-                door.refresh_token = auth["refresh"]
-                door.access_token_expires = auth["exp"]
-                return auth
+            async with ClientSession(connector=TCPConnector(ssl=False)) as session:
+                async with session.post(config.UFANET_SERVICE_URL+config.UFANET_REFRESH_TOKEN_API, \
+                                data=json.dumps(data), \
+                                headers=headers) as response:
+                    auth = await response.json()
+                    door.access_token = auth["access"]
+                    door.refresh_token = auth["refresh"]
+                    door.access_token_expires = datetime.datetime.fortimestamp(auth["exp"])
+                    return auth
         except Exception as ex:
             pass
 
@@ -69,18 +69,30 @@ class Domofon:
         if not door.access_token:
             auth = await self.login(door)
 
-        if auth:
-            headers=Utils.get_headers().copy()
-            headers["Authorization"]=auth["access"]
-            session = ClientSession(connector=TCPConnector(ssl=False))
-            async with session.post(config.UFANET_SERVICE_URL+config.UFANET_OPEN_API, headers=headers) as response:
-                result=await response.status()
+        if door.access_token:
+            try:
+                headers=Utils.get_headers().copy()
+                headers["Authorization"]="jwt "+door.access_token
+                result=status.HTTP_400_BAD_REQUEST
+                async with ClientSession(connector=TCPConnector(ssl=False)) as session:
+                    async with session.get(config.UFANET_SERVICE_URL+config.UFANET_SKUD_API, headers=headers) as response:
+                        result=response.status
+                        if result==status.HTTP_200_OK:
+                            skud=await response.json()
+                            door.ext_door_id=skud[0]["id"]
+                            url=config.UFANET_SERVICE_URL+config.UFANET_SKUD_API+str(door.ext_door_id)+"/open/"
+                            async with session.get(url, headers=headers) as response:
+                                result=response.status
+                                op_result=await response.json()
 
-            if result==status.HTTP_401_UNAUTHORIZED and not refresh:
-                auth = await self.refresh_token(door)
-                if auth:
-                    return await self.open(door, True)
 
-            return result==status.HTTP_200_OK
+                if result==status.HTTP_401_UNAUTHORIZED and not refresh:
+                    auth = await self.refresh_token(door)
+                    if auth:
+                        return await self.open(door, True)
+                
+                return result==status.HTTP_200_OK
+            except:
+                return False
 
         return False

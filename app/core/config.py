@@ -24,7 +24,7 @@ MIN_CONNECTIONS_COUNT: int = config("MIN_CONNECTIONS_COUNT", cast=int, default=1
 
 SECRET_KEY: Secret = config("SECRET_KEY", cast=Secret)
 
-PROJECT_NAME: str = config("PROJECT_NAME", default="FastAPI example application")
+PROJECT_NAME: str = config("PROJECT_NAME", default="Domofon")
 ALLOWED_HOSTS: List[str] = config(
     "ALLOWED_HOSTS",
     cast=CommaSeparatedStrings,
@@ -56,4 +56,4 @@ logger.configure(handlers=[{"sink": sys.stderr, "level": LOGGING_LEVEL}])
 UFANET_SERVICE_URL: str = config("UFANET_SERVICE_URL", cast=str, default="https://dom.ufanet.ru")
 UFANET_LOGIN_API: str = config("UFANET_LOGIN_API", cast=str, default="/api/v1/auth/auth_by_contract/")
 UFANET_REFRESH_TOKEN_API: str = config("UFANET_REFRESH_TOKEN_API", cast=str, default="/api/v1/auth/refresh/")
-UFANET_OPEN_API: str = config("UFANET_OPEN_API", cast=str, default="/api/v0/open/")
+UFANET_SKUD_API: str = config("UFANET_SKUD_API", cast=str, default="/api/v0/skud/shared/")
