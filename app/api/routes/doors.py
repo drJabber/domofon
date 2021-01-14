@@ -8,15 +8,18 @@ from app.models.schemas.doors  import (DoorIn,
     DoorInResponse,
     DoorInCreate
 )
+from app.models.schemas.yadialogs import RequestIn
+
 from app.services.doors import check_door_id_is_taken, check_ext_door_id_is_taken
 from app.services.domofon import Domofon
 
 router = APIRouter()
 domofon = Domofon()
 
-@router.post("/open", response_model=DoorInResponse, name="door:open")
-async def open(
-    door_in: DoorIn = Body(..., embed=True, alias="door"),
+@router.post("/aliceopen", response_model=DoorInResponse, name="door:open")
+async def alice_open(
+    alice_in: RequestIn = Body(..., embed=True, alias="request"),
+    door_id: str = '',
     doors_repo: DoorsRepository = Depends(get_repository(DoorsRepository))
 ) -> DoorInResponse:
     wrong_door_error = HTTPException(
@@ -29,7 +32,8 @@ async def open(
     )
 
     try:
-        door = await doors_repo.get_door_by_door_id(door_id=door_in.door_id)
+        # door = await doors_repo.get_door_by_door_id(door_id=door_in.door_id)
+        door = await doors_repo.get_door_by_door_id(door_id=door_id)
 
     except EntityDoesNotExist as existence_error:
         raise wrong_door_error
