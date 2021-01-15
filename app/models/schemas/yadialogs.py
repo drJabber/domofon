@@ -26,7 +26,7 @@ class Meta(BaseModel):
     locale: str
     timezone: str
     client_id: str
-    interfaces: AliceInterfaces
+    interfaces: Interfaces
 
 class Markup(BaseModel):
     dangerous_context: str
@@ -51,13 +51,16 @@ class RequestIn(BaseModel):
     request: Request
     version: str
 
-class Response(BaseModel):
+
+class ResponseSession(BaseModel):
+    text: str
+    tts: str
     end_session: bool
 
 class ResponseOut(BaseModel):
     version: str
-    session: str
-    response: Response
+    session: Dict
+    response: ResponseSession
 
 
 

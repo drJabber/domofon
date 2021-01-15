@@ -8,7 +8,12 @@ from app.models.schemas.doors  import (DoorIn,
     DoorInResponse,
     DoorInCreate
 )
-from app.models.schemas.yadialogs import RequestIn
+from app.models.schemas.yadialogs import (RequestIn, 
+    ResponseOut,
+    ResponseSession,
+    )
+
+from app.services.utils import get_positive_open_response_for_yd, get_positive_open_tts_response_for_yd
 
 from app.services.doors import check_door_id_is_taken, check_ext_door_id_is_taken
 from app.services.domofon import Domofon
@@ -16,12 +21,12 @@ from app.services.domofon import Domofon
 router = APIRouter()
 domofon = Domofon()
 
-@router.post("/aliceopen", response_model=DoorInResponse, name="door:open")
+@router.post("/aliceopen", response_model=ResponseOut, name="door:open")
 async def alice_open(
-    alice_in: RequestIn = Body(..., embed=True, alias="request"),
-    door_id: str = '',
+    door_id: str,
+    alice_in: RequestIn , #= Body(..., embed=True, alias="request"),
     doors_repo: DoorsRepository = Depends(get_repository(DoorsRepository))
-) -> DoorInResponse:
+) -> ResponseOut:
     wrong_door_error = HTTPException(
         status_code=status.HTTP_423_LOCKED,
         detail=strings.WRONG_DOOR,
@@ -48,8 +53,13 @@ async def alice_open(
             access_token_expires=door.access_token_expires \
         )
 
-    return DoorInResponse(
-        door = Door(door_id=door.door_id)
+    return ResponseOut(
+        version=alice_in.version,
+        session=alice_in.session,
+        response=ResponseSession(
+            text=get_positive_open_response_for_yd(),
+            tts=get_positive_open_tts_response_for_yd(),
+            end_session="True")
     )
 
 @router.post("/register", 
