@@ -24,12 +24,18 @@ class AllowedPathsMiddleware:
         for pattern, allowed_hosts in self.patterns.items():
             if (path == pattern or pattern.endswith('*') and path.startswith(pattern[:-1])) and \
               not (host in allowed_hosts or '*' in allowed_hosts):
-                valid_host_for_path = False
-                break
+                valid = False
+                for h in allowed_hosts:
+                    if h.endswith('*') and host.startswith(h[:-1]):
+                        valid = True
+                        break
+                valid_host_for_path = valid
+                if not valid:
+                    break
         
         if valid_host_for_path:
             await self.app(scope, receive, send)    
         else:
-            response = JSONResponse(content={"error": "Host does not allowed"}, status_code=HTTP_400_BAD_REQUEST)  
+            response = JSONResponse(content={"errors": [f"Host {host} does not allowed"]}, status_code=HTTP_400_BAD_REQUEST)  
             await response(scope, receive, send)  
 
