@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from fastapi import APIRouter, Body, Depends, HTTPException, status
 from app.resources import strings
 from app.db.errors import EntityDoesNotExist
@@ -25,6 +26,7 @@ domofon = Domofon()
 async def alice_open(
     door_id: str,
     alice_in: RequestIn , #= Body(..., embed=True, alias="request"),
+    # rq : Dict[Any, Any],
     doors_repo: DoorsRepository = Depends(get_repository(DoorsRepository))
 ) -> ResponseOut:
     wrong_door_error = HTTPException(
@@ -35,7 +37,7 @@ async def alice_open(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         detail=strings.CANT_OPEN_DOOR,
     )
-
+    # alice_in = RequestIn()
     try:
         # door = await doors_repo.get_door_by_door_id(door_id=door_in.door_id)
         door = await doors_repo.get_door_by_door_id(door_id=door_id)

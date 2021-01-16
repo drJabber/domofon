@@ -8,4 +8,4 @@ router = APIRouter()
 # router.include_router(authentication.router, tags=["authentication"], prefix="/client")
 # router.include_router(users.router, tags=["users"], prefix="/user")
 
-router.include_router(doors.router, tags=["doors", "domofon"], prefix="/domofon")
+router.include_router(doors.router, tags=["domofon"], prefix="/domofon")
