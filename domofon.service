@@ -1,0 +1,13 @@
+[Unit]
+Description=Yandex Station (Alice) Domofon service
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+ 
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker-compose --file /opt/domofon/docker-compose-prod.yml up
+ExecStop=/usr/bin/docker-compose --file /opt/domofon/docker-compose-prod.yml down
+ 
+[Install]
+WantedBy=multi-user.target
