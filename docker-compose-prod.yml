@@ -21,6 +21,6 @@ services:
     ports:
       - "5442:5432"
     env_file:
-      - .env
+      - .env.prod
     volumes:
       - ./postgres-data:/var/lib/postgresql/data:cached
