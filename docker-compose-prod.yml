@@ -5,7 +5,7 @@ services:
     build:
         context: .
         dockerfile: Dockerfile.prod
-    image: alice-domifon:v0.1
+    image: alice-domofon:v0.1
     container_name: alice_domofon
     restart: on-failure
     ports:
@@ -16,6 +16,23 @@ services:
       - .env.prod
     depends_on:
       - db
+      - certbot
+    volumes:
+      - le-certs:/ssl
+      - le-webroot:/app/app/static/html
+
+  certbot:
+    build:
+      context: ./le-certbot
+      dockerfile: Dockerfile
+    container_name: le_certbot
+    volumes:
+      - le-certs:/etc/letsencrypt
+      - le-webroot:/var/www/html
+    env_file:
+      - .env.prod
+    restart: "no"
+
   db:
     image: postgres:11.5-alpine
     ports:
@@ -24,3 +41,11 @@ services:
       - .env.prod
     volumes:
       - ./postgres-data:/var/lib/postgresql/data:cached
+
+volumes:
+  le-certs:
+    external:
+      name: le-certs
+  le-webroot:
+    external:
+      name: le-webroot

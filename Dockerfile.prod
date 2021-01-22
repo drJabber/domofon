@@ -7,7 +7,7 @@ WORKDIR /app
 
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends netcat && \
+    apt-get install --force-yes -qq --no-install-recommends cron && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY poetry.lock pyproject.toml ./
