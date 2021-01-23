@@ -19,4 +19,4 @@ tests
 scripts
 postman
 ./postgres-data
-certbot-*
+certbot*
