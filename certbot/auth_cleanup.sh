@@ -15,3 +15,6 @@ if [ -n "${DOMAIN}" ]; then
                 -H "Authorization: Apikey $API_KEY" \
                 -H "Content-Type: application/json"
 fi
+
+cp /etc/letsencrypt/archive/$CERTBOT_DOMAIN/cert1.pem $APP_PATH/ssl/cert1.pem
+cp /etc/letsencrypt/archive/$CERTBOT_DOMAIN/privkey1.pem $APP_PATH/ssl/privkey1.pem
