@@ -17,7 +17,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./ssl:/ssl
+      - ./ssl:/app/ssl
       - ./app/static/html:/app/app/static/html
 
   db:
