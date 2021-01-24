@@ -43,6 +43,32 @@ docker-compose -f docker-compose-prod.yml build
 ``` bash 
 sudo systemctl start domofon
 ```
+- Регистрируем дверь в нашем сервисе:
+Выполняем POST запрос
+``` 
+https://local_service_host:8000/api/v1/domofon/register
+```
+с заголовком
+``` 
+Content-type: application/json
+```
+и телом
+``` json
+{
+	"door": 
+	{
+		"door_id" : <ID двери (придумайте сами)>,
+		"ext_door_id" : "",
+		"ext_user": <login в приложении "Мой умный дом">,
+		"ext_password" : <пароль в приложении "Мой умный дом">
+	}
+}```
+- Если наш хост находится за NATом - пробрасываем на роутере порт на хост с нашим сервисом
+- [Создаем в Алисе навык](https://dialogs.yandex.ru/developer), прописываем туда ссылку на наш сервис с параметром - ID двери, публикуем навык
+``` 
+https://<remote_service_domain>:8000/api/v1/domofon/aliceopen?door_id=<ID двери>
+```
+- Если все получилось, на кодовую фразу, например, "Алиса, попроси домофон открыть дверь" - дверь домофона открывается.
 
 
 
