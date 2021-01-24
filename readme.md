@@ -39,6 +39,18 @@ sudo ./certbot-crontab-create.sh
 docker-compose -f docker-compose-prod.yml build
 ```
 - Создаем сервис systemd, который будет запускать контейнер: кладем файл domofon.service в директорию /etc/systemd/system
+- запускаем БД:
+``` bash 
+docker-compose -f docker-compose-prod.yml up -d db
+```
+- выполняем скрипты миграции:
+``` bash 
+alembic upgrade head
+```
+- останавливаем сервис :
+``` bash 
+docker-compose -f docker-compose-prod.yml down
+```
 - Запускаем сервис: 
 ``` bash 
 sudo systemctl start domofon
@@ -69,10 +81,4 @@ Content-type: application/json
 ``` 
 https://<remote_service_domain>:8000/api/v1/domofon/aliceopen?door_id=<ID двери>
 ```
-- Если все получилось, на кодовую фразу, например, "Алиса, попроси домофон открыть дверь" - дверь домофона открывается.
-
-
-
-
-
-
+- Если все получилось, то на кодовую фразу, например, "Алиса, попроси домофон открыть дверь" - дверь домофона открывается.
