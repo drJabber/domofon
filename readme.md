@@ -6,10 +6,10 @@
 Хотелось сделать что-нибудь, чтобы Алиса открывала дверь домофона.
 
 ## Что получилось
-С помощью mitmproxy расковырял авторизацию мобильного приложения перед  API ufanet.
+С помощью [mitmproxy](https://mitmproxy.org/) расковырял авторизацию мобильного приложения перед  API ufanet.
 На Python+Fastapi+Postgres нарисовал сервис с API, который может регистрировать двери в БД Postgres и открывать их по команде Алисы.
-Сервис запаковывается в Docker-контейнер и может быть доступен через https. Сертификат для домена получаем от LetsEncrypt.
-Сервис хостится на gandi.net
+Сервис запаковывается в Docker-контейнер и может быть доступен через https. Сертификат для домена получаем от [LetsEncrypt](https://letsencrypt.org/).
+Сервис хостится на [gandi.net](https://www.gandi.net/)
 
 ### Переменные окружения
 Файл .env.prod содержит переменные окружения для проекта в виде ENV_VAR=VALUE
@@ -26,11 +26,23 @@
 
 ### Деплой
 - Делаем git clone с этого репозитория например, в папку, /opt
-- Устанавливаем cretbot, например: apt install certbot
-- Запускаем скрипт создания системного кронтаба: sudo ./certbot-crontab-create.sh
-- Создаем контейнер: Делаем docker-compose -f docker-compose-prod.yml build
+- Устанавливаем cretbot, например: 
+``` bash 
+sudo apt install certbot
+```
+- Запускаем скрипт создания системного кронтаба: 
+``` bash 
+sudo ./certbot-crontab-create.sh
+```
+- Создаем контейнер: Делаем 
+``` bash 
+docker-compose -f docker-compose-prod.yml build
+```
 - Создаем сервис systemd, который будет запускать контейнер: кладем файл domofon.service в директорию /etc/systemd/system
-- Запускаем сервис: sudo systemctl start domofon
+- Запускаем сервис: 
+``` bash 
+sudo systemctl start domofon
+```
 
 
 
