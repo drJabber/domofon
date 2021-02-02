@@ -87,7 +87,11 @@ class Domofon:
 
 
                 if result==status.HTTP_401_UNAUTHORIZED and not refresh:
-                    auth = await self.refresh_token(door)
+                    auth = await self.refresh(door)
+                    if auth:
+                        return await self.open(door, True)
+                if result==status.HTTP_403_FORBIDDEN:
+                    auth = await self.login(door)
                     if auth:
                         return await self.open(door, True)
                 

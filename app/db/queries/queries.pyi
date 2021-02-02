@@ -73,6 +73,7 @@ class DoorsQueriesMixin:
         access_token_expires: Optional[datetime.datetime]
 
     ) -> Record: ...
+    
     async def update_door_by_door_id(
         self,
         conn: Connection,
